@@ -10,7 +10,7 @@
 	// Your Openweathermap city code
 	// Find your id code at http://bulk.openweathermap.org/sample/
 	var zip_code = '10023,US'; //NYC as an example. Country code needed for countries other than US.
-	var api_key = 'YOUR API KEY HERE';
+	var api_key = 'c4fcedf8ddcf7f48123a15bdf8e68080';
 
 	// Your temperature unit measurement
 	// This bit is simple, 'metric' for Celcius, and 'imperial' for Fahrenheit
@@ -216,7 +216,7 @@
 		};
 	}
 
-	$(window).load(function() {
+	jQuery(function() {
 		// Fetch the weather data for right now
 		queryOpenWeatherMap();
 

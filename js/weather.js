@@ -9,16 +9,21 @@
 
 	// Your Openweathermap city code
 	// Find your id code at http://bulk.openweathermap.org/sample/
-	var zip_code = '10023,US'; //NYC as an example. Country code needed for countries other than US.
-	var api_key = 'c4fcedf8ddcf7f48123a15bdf8e68080';
+	var zip_code = '3290,BE'; //NYC as an example. Country code needed for countries other than US.
+	var api_key = '<YOUR_API_KEY>';
 
 	// Your temperature unit measurement
 	// This bit is simple, 'metric' for Celcius, and 'imperial' for Fahrenheit
-	var metric = 'imperial';
+	var metric = 'metric';
+
+	var language = "nl"; // language to request weather info in.
+
+	var locale = "nl-be";
 	
 	// Format for date and time
-	var formatTime = 'h:mm:ss a'
-	var formatDate = 'dddd, MMMM Do'
+	var formatTime = 'HH:mm:ss'
+	var formatDate = 'dddd DD MMMM'
+	var shortDateformat = 'dd D MMM YYYY'
 
 	// Yahoo! query interval (milliseconds)
 	// Default is every 15 minutes. Be reasonable. Don't query Yahoo every 500ms.
@@ -38,6 +43,7 @@
 	function fillCurrently(currently) {
 		var icon = $('#currently .icon');
 		var desc = $('#currently .desc');
+		var templabel = $('#currently .templabel');
 		var temp = $('#currently .temp');
 
 		// Insert the current details. Icons may be changed by editing the icons array.
@@ -48,6 +54,7 @@
 			desc.html(currently.weather[0].description);
 		}
 		if (temp.length) {
+			templabel.html(translations.temperature + ': ');
 			temp.html(resolveTemp(currently.main.temp));
 		}
 	}
@@ -66,7 +73,7 @@
 			if (day === 1) {
 				day.html('Today');
 			} else {
-				day.html(new Date(forecast.dt*1000).toDateString());
+				day.html(moment(new Date(forecast.dt*1000)).format(shortDateformat));
 			}
 		}
 
@@ -78,17 +85,17 @@
 			desc.html(forecast.weather[0].description);
 		}
 		if (high.length) {
-			high.html(resolveTemp(forecast.main.temp_max));
+			high.html(translations.high + ': ' + resolveTemp(forecast.main.temp_max));
 		}
 		if (low.length) {
-			low.html(resolveTemp(forecast.main.temp_min));
+			low.html(translations.low + ': ' +resolveTemp(forecast.main.temp_min));
 		}
 	}
 
 	function queryOpenWeatherMap() {
 		$.ajax({
 			type: 'GET',
-			url: 'https://api.openweathermap.org/data/2.5/weather?zip=' + zip_code + '&appid=' + api_key + '&units=' + metric,
+			url: 'https://api.openweathermap.org/data/2.5/weather?zip=' + zip_code + '&appid=' + api_key + '&units=' + metric + '&lang=' + language,
 			dataType: 'json'
 		}).done(function (result) {
 			// Drill down into the returned data to find the relevant weather information
@@ -98,7 +105,7 @@
 
 		$.ajax({
 			type: 'GET',
-			url: 'https://api.openweathermap.org/data/2.5/forecast?zip=' + zip_code + '&appid=' + api_key + '&units=' + metric,
+			url: 'https://api.openweathermap.org/data/2.5/forecast?zip=' + zip_code + '&appid=' + api_key + '&units=' + metric + '&lang=' + language,
 			dataType: 'json'
 		}).done(function (result) {
 			// Drill down into the returned data to find the relevant weather information
@@ -216,31 +223,40 @@
 		};
 	}
 
+	var translations = null;
 	jQuery(function() {
-		// Fetch the weather data for right now
-		queryOpenWeatherMap();
-
-		// Query Yahoo! at the requested interval for new weather data
-		setInterval(function() {
+		$.ajax({
+			type: 'GET',
+			url: '/data/locale/' + locale + '.json',
+			dataType: 'json'
+		}).done(function (result) {
+			translations = result;
+			moment.locale(locale);
+			// Fetch the weather data for right now
 			queryOpenWeatherMap();
-		}, waitBetweenWeatherQueriesMS);
-
-		// Set the current time and date on the clock
-		if ($('#time').length) {
-			$('#time').html(moment().format(formatTime));
-		}
-		if ($('#date').length) {
-			$('#date').html(moment().format(formatDate));
-		}
-
-		// Refresh the time and date every second
-		setInterval(function(){
+	
+			// Query Yahoo! at the requested interval for new weather data
+			setInterval(function() {
+				queryOpenWeatherMap();
+			}, waitBetweenWeatherQueriesMS);
+	
+			// Set the current time and date on the clock
 			if ($('#time').length) {
 				$('#time').html(moment().format(formatTime));
 			}
 			if ($('#date').length) {
 				$('#date').html(moment().format(formatDate));
 			}
-		}, 1000);
+	
+			// Refresh the time and date every second
+			setInterval(function(){
+				if ($('#time').length) {
+					$('#time').html(moment().format(formatTime));
+				}
+				if ($('#date').length) {
+					$('#date').html(moment().format(formatDate));
+				}
+			}, 1000);
+		});
 	});
 }());

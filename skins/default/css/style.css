@@ -37,6 +37,7 @@ background: black;
 
 .forecast {
 width: 20%;
+vertical-align: bottom;
 }
 
 #forecast1 {
@@ -56,14 +57,18 @@ color: #777777;
 }
 
 .wi {
-font-size: 14vmin;
- line-height: 19vmin !important;
+   font-size: 6vmin;
+   line-height: 7vmin !important;
 }
 #currently {
  height: 56vh;
+ padding-right: 0.5vmin;
+ padding-left: 0.5vmin;
 }
 #currently .wi {
 font-size: 18vmin;
+line-height: 16vmin !important;
+margin-bottom: 3.5vmin;
 }
 
 #forecastHeading {
@@ -75,12 +80,12 @@ height: 100px;
 }
 
 .day {
-font-size: 3.5vmin;
-margin-bottom: 1.5vmin;
+   font-size: 2.5vmin;
+   margin-bottom: 1.5vmin;
 }
 .desc {
 font-size: 3.5vmin;
- margin-top: 2.5vmin;
+ margin-top: 0.5vmin;
 margin-bottom: 0.5vmin;
 }
 .highTemp {

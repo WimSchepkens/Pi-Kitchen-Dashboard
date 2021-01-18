@@ -10,7 +10,7 @@
 	// Your Openweathermap city code
 	// Find your id code at http://bulk.openweathermap.org/sample/
 	var zip_code = '3290,BE'; //NYC as an example. Country code needed for countries other than US.
-	var api_key = '<YOUR_API_KEY>';
+	var api_key = ''; // No need to fill in here. Just pass it in the querystring ?weatherapi_key=<YOUR_KEY>
 
 	// Your temperature unit measurement
 	// This bit is simple, 'metric' for Celcius, and 'imperial' for Fahrenheit
@@ -222,14 +222,29 @@
 			'804': '<i class="wi wi-day-cloudy"></i>',			//partly cloudy (day)
 		};
 	}
+	function getUrlVars()
+	{
+		var vars = [], hash;
+		var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+		for(var i = 0; i < hashes.length; i++)
+		{
+			hash = hashes[i].split('=');
+			vars.push(hash[0]);
+			vars[hash[0]] = hash[1];
+		}
+		return vars;
+	}
 
 	var translations = null;
+	var urlParams = null;
 	jQuery(function() {
 		$.ajax({
 			type: 'GET',
 			url: '/data/locale/' + locale + '.json',
 			dataType: 'json'
 		}).done(function (result) {
+			urlParams = getUrlVars();
+			api_key = urlParams.weatherapi_key;
 			translations = result;
 			moment.locale(locale);
 			// Fetch the weather data for right now

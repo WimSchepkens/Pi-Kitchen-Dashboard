@@ -33,5 +33,4 @@ jQuery(function(){
         }
         fetchFeeds(feeds[currentFeed++], 10);
     }, 50000)
-})
-//'https://rss.nytimes.com/services/xml/rss/nyt/World.xml'
+});

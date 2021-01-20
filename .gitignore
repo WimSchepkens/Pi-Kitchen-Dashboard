@@ -2,3 +2,6 @@ node_modules/
 apikey.txt
 package-lock.json
 data/rss/*.xml
+data/calendars/*.ical
+data/config.json
+bundle.js

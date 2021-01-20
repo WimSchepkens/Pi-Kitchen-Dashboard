@@ -1,11 +1,31 @@
-var feeds = [
-    '../../data/rss/nieuwsblad.xml'
-];
-var currentFeed = 0;
+const jquery = require('jquery');
 
-jQuery(function(){
-    function fetchFeeds(url, maxElements){
-        $.ajax(url, {
+function RSSFeeder(){
+    'use strict';
+
+    var $ = jquery;
+
+    var currentFeed = 0;
+
+    this.setConfig = function(config){
+        this.config = config;
+    }
+
+    this.Init = function(){
+
+    }
+    this.render = function(){
+        this.fetchFeeds(this.config.feeds[currentFeed++], 10);
+        setInterval(function(){
+            if(currentFeed===this.config.feeds.length){
+                currentFeed = 0;
+            }
+            this.fetchFeeds(this.config.feeds[currentFeed++], 10);
+        }.bind(this), 50000);
+    }
+
+    this.fetchFeeds = function(feed, maxElements){
+        $.ajax('../../data/rss/' + feed.name.replace(' ', '_') + '.xml', {
             accepts: {
             xml: "application/rss+xml"
             },
@@ -26,11 +46,6 @@ jQuery(function(){
             }
         });
     }
-    fetchFeeds(feeds[currentFeed++], 10);
-    setInterval(function(){
-        if(currentFeed===feeds.length){
-            currentFeed = 0;
-        }
-        fetchFeeds(feeds[currentFeed++], 10);
-    }, 50000)
-});
+}
+
+module.exports = RSSFeeder;
